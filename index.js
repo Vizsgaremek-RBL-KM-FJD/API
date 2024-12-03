@@ -9,6 +9,8 @@ app.get('/', (req, res) => {
     res.json({"message": "OK, working!"})
 });
 
+app.use('/users', usersRouter);
+
 app.use((err, req, res, next) => {
     console.log(err.message, err.stack);
     res.status(err.statusCode || 500).json({error: err.message});

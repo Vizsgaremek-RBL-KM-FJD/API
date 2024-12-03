@@ -1,7 +1,7 @@
 const db = require('./db');
 
 async function getDatas() {
-    const rows = db.query(
+    const rows = await db.query(
         "SELECT * FROM users"
     )
     return rows?rows:[];
@@ -46,7 +46,7 @@ async function remove(id) {
 }
 
 async function patch(id,user) {
-    let fields = OBject.keys(user).nap((field)=>field+"=?").join(", ");
+    let fields = Object.keys(user).nap((field)=>field+"=?").join(", ");
     let updateValues = Object.values(user);
     updateValues.push(id);
 
