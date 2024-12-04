@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2024. Dec 03. 21:24
+-- Létrehozás ideje: 2024. Dec 04. 10:13
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -20,6 +20,54 @@ SET time_zone = "+00:00";
 --
 -- Adatbázis: `api`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `place`
+--
+
+CREATE TABLE `place` (
+  `PlaceID` int(11) NOT NULL,
+  `UserID` int(11) NOT NULL,
+  `owner_name` varchar(100) NOT NULL,
+  `phone_number` varchar(15) NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `place_name` varchar(100) NOT NULL,
+  `price` double NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- A tábla adatainak kiíratása `place`
+--
+
+INSERT INTO `place` (`PlaceID`, `UserID`, `owner_name`, `phone_number`, `address`, `place_name`, `price`) VALUES
+(1, 2, 'János Fekete', '06501379865', 'Révay utca 17', 'Külker suli tornaterem', 10000);
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `rents`
+--
+
+CREATE TABLE `rents` (
+  `RentID` int(11) NOT NULL,
+  `UserID` int(11) NOT NULL,
+  `PlaceID` int(11) NOT NULL,
+  `OwnerPhoneNumber` varchar(15) DEFAULT NULL,
+  `UserName` varchar(100) DEFAULT NULL,
+  `UserPhoneNumber` varchar(15) DEFAULT NULL,
+  `StartDate` datetime NOT NULL,
+  `EndDate` datetime NOT NULL,
+  `TotalAmount` double NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- A tábla adatainak kiíratása `rents`
+--
+
+INSERT INTO `rents` (`RentID`, `UserID`, `PlaceID`, `OwnerPhoneNumber`, `UserName`, `UserPhoneNumber`, `StartDate`, `EndDate`, `TotalAmount`) VALUES
+(1, 3, 1, '06501379865', 'Márk Krizsicskó', '0630302244', '2024-12-05 08:00:00', '2024-12-05 10:00:00', 20000);
 
 -- --------------------------------------------------------
 
@@ -42,12 +90,27 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`ID`, `first_name`, `last_name`, `gender`, `email`, `address`, `phone_number`) VALUES
-(1, 'Roxána', 'Nemes', 'nő', 'nms.roxi@gmail.com', 'Barcsay utca 6.', '06774225900'),
-(2, 'János', 'Fekete', 'férfi', 'feketejanosdavid@ktch.hu', 'Barcsay utca 6.', '06501379865');
+(2, 'János', 'Fekete', 'férfi', 'feketejanosdavid@ktch.hu', 'Barcsay utca 6.', '06501379865'),
+(3, 'Márk', 'Krizsicskó', 'férfi', 'krizsicskomark@ktch.hu', 'Érd, sárd utca 21', '0630302244');
 
 --
 -- Indexek a kiírt táblákhoz
 --
+
+--
+-- A tábla indexei `place`
+--
+ALTER TABLE `place`
+  ADD PRIMARY KEY (`PlaceID`),
+  ADD KEY `UserID` (`UserID`);
+
+--
+-- A tábla indexei `rents`
+--
+ALTER TABLE `rents`
+  ADD PRIMARY KEY (`RentID`),
+  ADD KEY `UserID` (`UserID`),
+  ADD KEY `PlaceID` (`PlaceID`);
 
 --
 -- A tábla indexei `users`
@@ -61,10 +124,39 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT a táblához `place`
+--
+ALTER TABLE `place`
+  MODIFY `PlaceID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT a táblához `rents`
+--
+ALTER TABLE `rents`
+  MODIFY `RentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT a táblához `users`
 --
 ALTER TABLE `users`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- Megkötések a kiírt táblákhoz
+--
+
+--
+-- Megkötések a táblához `place`
+--
+ALTER TABLE `place`
+  ADD CONSTRAINT `place_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `users` (`ID`);
+
+--
+-- Megkötések a táblához `rents`
+--
+ALTER TABLE `rents`
+  ADD CONSTRAINT `rents_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `users` (`ID`),
+  ADD CONSTRAINT `rents_ibfk_2` FOREIGN KEY (`PlaceID`) REFERENCES `place` (`PlaceID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
