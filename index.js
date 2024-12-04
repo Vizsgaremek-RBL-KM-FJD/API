@@ -1,7 +1,10 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+
 const usersRouter = require('./routes/users');
+const placesRouter = require('./routes/places');
+const rentsRouter = require('./routes/rents');
 
 app.use(express.json());
 
@@ -10,6 +13,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/users', usersRouter);
+app.use('/places', placesRouter);
+app.use('/rents', rentsRouter);
 
 app.use((err, req, res, next) => {
     console.log(err.message, err.stack);
