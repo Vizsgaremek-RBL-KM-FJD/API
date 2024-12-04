@@ -11,6 +11,22 @@ router.get('/', async (req, res, next) => {
     }
 });
 
+router.delete('/:id', async (req, res, next) => {
+    try {
+        res.json(await places.deletePlace(req.params.id));
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.put('/:id', async (req, res, next) => {
+    try {
+        res.json(await places.updatePlace(req.params.id, req.body));
+    } catch (err) {
+        next(err);
+    }
+});
+
 router.post('/', async (req, res, next) => {
     try {
         const { userId, address, placeName, price } = req.body;

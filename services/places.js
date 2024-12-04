@@ -5,6 +5,16 @@ async function getAllPlaces() {
     return rows;
 }
 
+async function deletePlace(id) {
+    const result = await db.query('DELETE FROM place WHERE PlaceID = ?', [id]);
+    return { message: 'Place deleted successfully' };
+}
+
+async function updatePlace(id, place) {
+    const result = await db.query('UPDATE place SET address = ?, place_name = ?, price = ? WHERE PlaceID = ?', [place.address, place.place_name, place.price, id]);
+    return { message: 'Place updated successfully' };
+}
+
 async function createPlace(userId, address, placeName, price) {
     const userResult = await db.query('SELECT first_name, last_name, phone_number FROM users WHERE ID = ?',
         [userId]
@@ -27,5 +37,7 @@ async function createPlace(userId, address, placeName, price) {
 
 module.exports = {
     getAllPlaces,
-    createPlace
+    createPlace,
+    deletePlace,
+    updatePlace
 };
