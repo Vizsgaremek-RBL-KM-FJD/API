@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2024. Dec 04. 10:13
+-- Létrehozás ideje: 2025. Feb 04. 11:11
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -37,13 +37,6 @@ CREATE TABLE `place` (
   `price` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- A tábla adatainak kiíratása `place`
---
-
-INSERT INTO `place` (`PlaceID`, `UserID`, `owner_name`, `phone_number`, `address`, `place_name`, `price`) VALUES
-(1, 2, 'János Fekete', '06501379865', 'Révay utca 17', 'Külker suli tornaterem', 10000);
-
 -- --------------------------------------------------------
 
 --
@@ -62,13 +55,6 @@ CREATE TABLE `rents` (
   `TotalAmount` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- A tábla adatainak kiíratása `rents`
---
-
-INSERT INTO `rents` (`RentID`, `UserID`, `PlaceID`, `OwnerPhoneNumber`, `UserName`, `UserPhoneNumber`, `StartDate`, `EndDate`, `TotalAmount`) VALUES
-(1, 3, 1, '06501379865', 'Márk Krizsicskó', '0630302244', '2024-12-05 08:00:00', '2024-12-05 10:00:00', 20000);
-
 -- --------------------------------------------------------
 
 --
@@ -82,16 +68,9 @@ CREATE TABLE `users` (
   `gender` enum('nő','férfi','nem nyilatkozom') NOT NULL,
   `email` varchar(100) NOT NULL,
   `address` varchar(255) DEFAULT NULL,
-  `phone_number` varchar(15) DEFAULT NULL
+  `phone_number` varchar(15) DEFAULT NULL,
+  `password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- A tábla adatainak kiíratása `users`
---
-
-INSERT INTO `users` (`ID`, `first_name`, `last_name`, `gender`, `email`, `address`, `phone_number`) VALUES
-(2, 'János', 'Fekete', 'férfi', 'feketejanosdavid@ktch.hu', 'Barcsay utca 6.', '06501379865'),
-(3, 'Márk', 'Krizsicskó', 'férfi', 'krizsicskomark@ktch.hu', 'Érd, sárd utca 21', '0630302244');
 
 --
 -- Indexek a kiírt táblákhoz
@@ -127,7 +106,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT a táblához `place`
 --
 ALTER TABLE `place`
-  MODIFY `PlaceID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `PlaceID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT a táblához `rents`
