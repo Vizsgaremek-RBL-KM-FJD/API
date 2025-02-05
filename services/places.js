@@ -20,8 +20,9 @@ async function createPlace(userId, address, placeName, price) {
         [userId]
     );
 
+    console.log("SQL lekérdezés eredménye:", userResult);
     if (userResult.length === 0) {
-        throw new Error('Felhasználó nem található');
+        throw new Error('Felhasználó nem található', Error);
     }
 
     const { first_name, last_name, phone_number } = userResult[0];

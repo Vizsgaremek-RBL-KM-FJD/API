@@ -7,7 +7,6 @@ const cors = require('cors');
 const usersRouter = require('./routes/users');
 const placesRouter = require('./routes/places');
 const rentsRouter = require('./routes/rents');
-const authRouter = require('./routes/auth');
 
 app.use(express.json());
 app.use(cors());
@@ -19,7 +18,6 @@ app.get('/', (req, res) => {
 app.use('/users', usersRouter);
 app.use('/places', placesRouter);
 app.use('/rents', rentsRouter);
-app.use('/auth', authRouter);
 
 app.use((err, req, res, next) => {
     console.log(err.message, err.stack);

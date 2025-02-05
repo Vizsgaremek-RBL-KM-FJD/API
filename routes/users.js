@@ -11,7 +11,7 @@ router.get('/', async function(req, res, next) {
     }
 })
 
-router.post ('/', async function(req, res, next) {
+router.post ('/register', async function(req, res, next) {
     try {
         res.json(await users.create(req.body));
     }
