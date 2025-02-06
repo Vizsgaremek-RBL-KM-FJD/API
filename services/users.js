@@ -1,5 +1,6 @@
 const db = require("./db");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 async function getDatas() {
     const rows = await db.query("SELECT * FROM users");
@@ -9,7 +10,6 @@ async function getDatas() {
 async function create(user) {
     console.log("User?", user);
     
-    // Jelszó hashelése bcrypt segítségével
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(user.password, saltRounds);
     
@@ -23,6 +23,25 @@ async function create(user) {
         message = "User created successfully";
     }
     return { message };
+}
+
+async function login(user) {
+    const rows = await db.query("SELECT * FROM users WHERE email = ?", [user.email]);
+    
+    if (rows.length === 0) {
+        return { error: "User not found" };
+    }
+
+    const dbUser = rows[0];
+    const match = await bcrypt.compare(user.password, dbUser.password);
+
+    if (!match) {
+        return { error: "Invalid credentials" };
+    }
+
+    const token = jwt.sign({ id: dbUser.id, email: dbUser.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+    return { message: "Login successful", token };
 }
 
 async function update(id, user) {
@@ -68,6 +87,7 @@ async function patch(id, user) {
 module.exports = {
     getDatas,
     create,
+    login,
     update,
     remove,
     patch,

@@ -3,13 +3,22 @@ const app = express();
 const port = 3000;
 
 const cors = require('cors');
+require('dotenv').config();
+
 
 const usersRouter = require('./routes/users');
 const placesRouter = require('./routes/places');
 const rentsRouter = require('./routes/rents');
 
 app.use(express.json());
-app.use(cors());
+const corsOptions = {
+    origin: 'http://localhost:4200',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+  };
+  
+app.use(cors(corsOptions));
 
 app.get('/', (req, res) => {
     res.json({"message": "OK, working!"})

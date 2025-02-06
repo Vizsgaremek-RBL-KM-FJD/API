@@ -27,7 +27,7 @@ router.put('/:id', async (req, res, next) => {
     }
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/create', async (req, res, next) => {
     try {
         const { userId, address, placeName, price } = req.body;
         res.json(await places.createPlace(userId, address, placeName, price));
