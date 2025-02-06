@@ -1,0 +1,6 @@
+"PlaceID","UserID","owner_name","phone_number","address","place_name","price"
+"4","5","Roxána Nemes","06774225900","Budapest, Barcsay utca","Cigány verő terem","10"
+"RentID","UserID","PlaceID","OwnerPhoneNumber","UserName","UserPhoneNumber","StartDate","EndDate","TotalAmount"
+"ID","first_name","last_name","gender","email","address","phone_number","password"
+"5","Roxána","Nemes","nő","nms.roxi@gmail.com","Barcsay utca 6.","06774225900","$2b$10$tZgZ7LpcHCFIZUDTrl11yOokE3gX63QNavhB2oqi0nmXOoO05q4u."
+"6","János","Fekete","férfi","janosfekete@gmail.com","Barcsay utca 6.","06-50-137-9865","$2b$10$COE6AlHVPPSjy9cdw4kzgeqTMWKrh7VoOl07ai6qPlRvuKE2SfAuK"
