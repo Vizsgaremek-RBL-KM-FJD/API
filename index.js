@@ -1,24 +1,24 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+const cookieParser = require("cookie-parser")
 
 const cors = require('cors');
 require('dotenv').config();
 
 
-const usersRouter = require('./routes/users');
-const placesRouter = require('./routes/places');
-const rentsRouter = require('./routes/rents');
+const usersRouter = require('./routers/users');
+const placesRouter = require('./routers/places');
+const rentsRouter = require('./routers/rents');
 
 app.use(express.json());
-const corsOptions = {
-    origin: 'http://localhost:4200',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-  };
-  
-app.use(cors(corsOptions));
+
+app.use(cors(
+    {origin:["http://localhost:4200", "https://localhost:4200"],
+     credentials:true   
+    }))
+
+app.use(cookieParser());
 
 app.get('/', (req, res) => {
     res.json({"message": "OK, working!"})
@@ -37,4 +37,3 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
     console.log(`The server is running on this port: ${port}`);
 });
-

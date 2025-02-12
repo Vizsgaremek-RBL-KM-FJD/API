@@ -25,24 +25,24 @@ async function create(user) {
     return { message };
 }
 
-async function login(user) {
-    const rows = await db.query("SELECT * FROM users WHERE email = ?", [user.email]);
+// async function login(user) {
+//     const rows = await db.query("SELECT * FROM users WHERE email = ?", [user.email]);
     
-    if (rows.length === 0) {
-        return { error: "User not found" };
-    }
+//     if (rows.length === 0) {
+//         return { error: "User not found" };
+//     }
 
-    const dbUser = rows[0];
-    const match = await bcrypt.compare(user.password, dbUser.password);
+//     const dbUser = rows[0];
+//     const match = await bcrypt.compare(user.password, dbUser.password);
 
-    if (!match) {
-        return { error: "Invalid credentials" };
-    }
+//     if (!match) {
+//         return { error: "Invalid credentials" };
+//     }
 
-    const token = jwt.sign({ id: dbUser.id, email: dbUser.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+//     const token = jwt.sign({ id: dbUser.id, email: dbUser.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    return { message: "Login successful", token };
-}
+//     return { message: "Login successful", token };
+// }
 
 async function update(id, user) {
     const result = await db.query(
@@ -67,6 +67,19 @@ async function remove(id) {
     return { message };
 }
 
+async function getMail(email){
+    const query = `select * from users where email=?`
+    const params = [email]
+    try{
+        const [row] = await db.query(query, params)
+        if (!row) throw new Error("A felhasználó nem található!")
+        return row
+    }
+    catch(error){
+        throw new Error("Az adatbázis nem elérhető!")
+    }
+}
+
 async function patch(id, user) {
     let fields = Object.keys(user).map((field) => field + "=?").join(", ");
     let updateValues = Object.values(user);
@@ -86,8 +99,9 @@ async function patch(id, user) {
 
 module.exports = {
     getDatas,
+    getMail,
     create,
-    login,
+    // login,
     update,
     remove,
     patch,
