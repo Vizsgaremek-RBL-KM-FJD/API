@@ -1,24 +1,35 @@
 const express = require('express');
-const app = express();
-const port = 3000;
-const cookieParser = require("cookie-parser")
-
-const cors = require('cors');
-require('dotenv').config();
-
 
 const usersRouter = require('./routers/users');
 const placesRouter = require('./routers/places');
 const rentsRouter = require('./routers/rents');
 
+const cookieParser = require("cookie-parser")
+const cors = require('cors');
+const fs = require('fs');
+const https = require('https');
+const bodyParser = require('body-parser');
+
+require('dotenv').config();
+
+const app = express();
 app.use(express.json());
+
+const port = 3000;
 
 app.use(cors(
     {origin:["http://localhost:4200", "https://localhost:4200"],
      credentials:true   
     }))
 
+app.use(bodyParser.json())
 app.use(cookieParser());
+
+const options = {
+    passphrase: "alma",
+    pfx: fs.readFileSync("./localhost.pfx")
+}
+
 
 app.get('/', (req, res) => {
     res.json({"message": "OK, working!"})
@@ -34,6 +45,6 @@ app.use((err, req, res, next) => {
     return;
 })
 
-app.listen(port, () => {
-    console.log(`The server is running on this port: ${port}`);
-});
+https.createServer(options, app).listen(
+    3000, () => console.log('The (Https) server is running on port 3000')
+)

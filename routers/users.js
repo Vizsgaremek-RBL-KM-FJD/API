@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const users = require('../services/users');
 const bcrypt = require("bcrypt");
-const { authenticateToken } = require('../middleware/auth');
+// const { authenticateToken } = require('../middleware/auth');
 const jwt = require('jsonwebtoken');
 
 require('dotenv').config()
@@ -10,12 +10,9 @@ const SECRETKEY = process.env.SECRETKEY
 
 function authenticationToken(req,res,next){
 
-    // const token = req.cookies.token
-
-    const token = req.cookies.token || req.headers["authorization"]?.split(" ")[1];
-
-
+    const token = req.cookies.token
     console.log("Token:",  req.cookies)
+
     if (!token) return res.status(401).json({message:"Hozzáférés megtagadva, nincs token!"})
     
     jwt.verify(token, SECRETKEY, (err,user)=>{
@@ -35,7 +32,11 @@ router.get('/', async function(req, res, next) {
     }
 });
 
-router.get('/profile', authenticateToken, async function(req, res, next) { 
+router.get("/secretdata", authenticationToken, async(req,res)=>{
+    res.status(200).json({message:"Itt a titok!"})
+})
+
+router.get('/profile', authenticationToken, async function(req, res, next) { 
     try {
         const userId = req.user.id; 
         const rows = await users.getById(userId);
@@ -50,8 +51,11 @@ router.get('/profile', authenticateToken, async function(req, res, next) {
 });
 
 router.post('/register', async function(req, res, next) {
+    let user = req.body
+    console.log(user)
+    user.password = await bcrypt.hash(user.password, 10);
     try {
-        res.json(await users.create(req.body));
+        res.json(await users.create(user));
     }
     catch (err) {
         next(err);
@@ -78,7 +82,7 @@ router.post("/login", async(req,res,next)=>{
             
             // const resUser= {...user, accessToken:token}
             const resUser= {...user}
-            delete resUser.password
+            // delete resUser.password
             res.status(200).json(resUser)
         }
         else {
@@ -92,7 +96,7 @@ router.post("/login", async(req,res,next)=>{
     }    
 })
 
-router.put('/:id', authenticateToken, async function(req, res, next) { 
+router.put('/:id', authenticationToken, async function(req, res, next) { 
     try {
         res.json(await users.update(req.params.id, req.body));
     }
@@ -101,7 +105,7 @@ router.put('/:id', authenticateToken, async function(req, res, next) {
     }
 });
 
-router.delete('/:id', authenticateToken, async function(req, res, next) { 
+router.delete('/:id', authenticationToken, async function(req, res, next) { 
     try {
         res.json(await users.remove(req.params.id));
     }
@@ -110,7 +114,7 @@ router.delete('/:id', authenticateToken, async function(req, res, next) {
     }
 });
 
-router.patch('/:id', authenticateToken, async function(req, res, next) { 
+router.patch('/:id', authenticationToken, async function(req, res, next) { 
     try {
         res.json(await users.patch(req.params.id, req.body));
     }
