@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser")
 const cors = require('cors');
 const fs = require('fs');
 const https = require('https');
+const http = require('http');
 const bodyParser = require('body-parser');
 
 require('dotenv').config();
@@ -45,6 +46,10 @@ app.use((err, req, res, next) => {
     return;
 })
 
-https.createServer(options, app).listen(
-    3000, () => console.log('The (Https) server is running on port 3000')
-)
+// https.createServer(options, app).listen(
+//     3000, () => console.log('The (Https) server is running on port 3000')
+// )
+
+app.listen(port, () => {
+    console.log(`Szerver fut a http://localhost:${port} címen`);
+});
