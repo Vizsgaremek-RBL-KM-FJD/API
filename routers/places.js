@@ -36,4 +36,14 @@ router.post('/create', async (req, res, next) => {
     }
 });
 
+router.get('/:id', async (req, res, next) => {
+    try {
+      const id = req.params.id;
+      const place = await places.getPlaceById(id);
+      res.json(place);
+    } catch (err) {
+      next(err);
+    }
+  });
+
 module.exports = router;
