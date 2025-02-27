@@ -11,6 +11,17 @@ router.get('/', async (req, res, next) => {
     }
 });
 
+router.get('/:id', async (req, res, next) => {
+  const userID = req.params.id;
+    try {
+        const rent = await rents.getRentsByUserID(userID);
+        res.json(rent);
+    } catch (err) {
+        next(err);
+    }
+});
+
+
 router.post('/', async (req, res, next) => {
     const { userID, placeID, startDate, endDate } = req.body;
     try {
@@ -36,5 +47,13 @@ router.post('/check-availability', async (req, res, next) => {
       next(err);
     }
   });
+
+router.delete('/:userID/:rentID', async (req, res, next) => {
+    try {
+        res.json(await rents.cancelRent(req.params.userID, req.params.rentID));
+    } catch (err) {
+        next(err);
+    }
+});
 
 module.exports = router;

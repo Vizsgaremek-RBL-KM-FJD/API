@@ -16,6 +16,11 @@ async function getRents() {
     }
 }
 
+async function getRentsByUserID(userID) {
+    const rows = await db.query('SELECT r.*, p.place_name FROM rents r INNER JOIN place p ON r.PlaceID = p.PlaceID WHERE r.UserID = ?', [parseInt(userID)]);
+    return rows;
+  }
+
 async function createRent(userID, placeID, startDate, endDate) {
     try {
         const [place] = await db.query(
@@ -51,7 +56,17 @@ async function createRent(userID, placeID, startDate, endDate) {
     }
 }
 
+async function cancelRent(userID, RentID) {
+    try {
+        const result = await db.query('DELETE FROM rents WHERE UserID = ? AND RentID = ?', [userID, RentID]);
+        return result;
+    } catch (error) {
+        throw error;
+}}
+
 module.exports = {
     getRents,
-    createRent
+    getRentsByUserID,
+    createRent,
+    cancelRent
 };
