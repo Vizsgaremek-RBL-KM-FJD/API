@@ -21,4 +21,20 @@ router.post('/', async (req, res, next) => {
     }
 });
 
+
+router.post('/check-availability', async (req, res, next) => {
+    const { date, time, placeID } = req.body;
+    try {
+      const rentsList = await rents.getRents();
+      const conflicts = rentsList.filter(rent => rent.placeID === placeID && rent.startDate <= date && rent.endDate >= date);
+      if (conflicts.length > 0) {
+        res.json({ success: false, message: 'Room is not available for rent!' });
+      } else {
+        res.json({ success: true, message: 'Room is available for rent!' });
+      }
+    } catch (err) {
+      next(err);
+    }
+  });
+
 module.exports = router;
