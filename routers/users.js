@@ -133,16 +133,15 @@ router.post("/logout", authenticationToken, async(req,res)=>{
     res.status(200).json({message:"A kijelentkezés sikeres!"})
 })
 
-router.get("/admin", async (req, res) => {
-    const userId = req.user.id;
-    const isAdmin = await userService.isAdmin(userId);
-    if (isAdmin) {
-        // User is an admin, allow access to admin routes
-        res.json({ message: "Welcome, admin!" });
-    } else {
-        // User is not an admin, deny access to admin routes
-        res.status(401).json({ message: "Unauthorized" });
+router.get('/isAdmin/:id', async function(req, res, next) {
+    const id = req.params.id;
+    try {
+        const isAdmin = await users.isAdmin(id);
+        res.json(isAdmin);
     }
+    catch (err) {
+        next(err);
+    }   
 });
 
 module.exports = router;

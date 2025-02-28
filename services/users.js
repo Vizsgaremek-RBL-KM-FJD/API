@@ -79,16 +79,10 @@ async function patch(id, user) {
 }
 
 async function isAdmin(id) {
-    const query = `SELECT is_admin FROM users WHERE id = ?`;
-    const params = [id];
-    try {
-        const [row] = await db.query(query, params);
-        if (!row) throw new Error("User not found");
-        return row.is_admin;
-    } catch (error) {
-        throw new Error("Database error");
-    }
+    const rows = await db.query("SELECT isAdmin FROM users WHERE id = ?", [id]);
+    return rows ? rows[0].isAdmin === 1 : false;
 }
+
 
 module.exports = {
     getDatas,
