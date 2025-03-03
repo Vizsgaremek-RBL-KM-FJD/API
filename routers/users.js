@@ -96,14 +96,16 @@ router.post("/login", async(req,res,next)=>{
     }    
 })
 
-router.put('/:id', authenticationToken, async function(req, res, next) { 
+router.put("/:id", async (req, res) => {
+    const id = req.params.id;
+    const user = req.body;
     try {
-        res.json(await users.update(req.params.id, req.body));
+      const result = await update(id, user, req);
+      res.json(result);
+    } catch (error) {
+      res.status(401).json({ message: error.message });
     }
-    catch (err) {
-        next(err);
-    }
-});
+  });
 
 router.delete('/:id', authenticationToken, async function(req, res, next) { 
     try {
@@ -122,6 +124,29 @@ router.patch('/:id', authenticationToken, async function(req, res, next) {
         next(err);
     }
 });
+
+router.patch('/sadmin-update-profile/:id',authenticationToken, async(req, res)=>{
+    const userId= req.params.id
+    const allowedFields = ['first_name', 'last_name', 'gender', 'email', 'address', 'phone_number', 'isAdmin'];
+    const updateData = {}
+    allowedFields.forEach( field=>{
+        if (req.body[field] !== undefined) updateData[field]= req.body[field]
+    })
+
+    console.log("(Sadmin)UpdateData", updateData)
+
+    if (Object.keys(updateData).length==0) 
+        return res.status(400).json({"message":"Nem küldtél frissítendő adatokat!"})
+
+    try {
+        console.log("ID", userId)
+        const updateUser= await users.update(userId, updateData)
+        res.json({message:"Profil frissítve!", user:updateUser})
+    }
+    catch(err){
+        res.status(500).send("Hiba történt a profil frissítésekor!")
+    }
+})
 
 router.post("/logout", authenticationToken, async(req,res)=>{
     res.cookie('token', '', {
