@@ -1,19 +1,8 @@
 const db = require('./db');
 
 async function getRents() {
-    try {
-        const query = `
-            SELECT r.RentID, r.UserID, r.PlaceID, r.StartDate, r.EndDate, r.TotalAmount,
-                   p.place_name, u.first_name AS user_name, u.phone_number AS user_phone
-            FROM rents r
-            JOIN place p ON r.placeID = p.PlaceID
-            JOIN users u ON r.userID = u.ID
-        `;
-        const [rows] = await db.query(query);
-        return rows?rows:[];
-    } catch (err) {
-        throw err;
-    }
+    const rows = await db.query('SELECT * FROM rents');
+    return rows;
 }
 
 async function getRentsByUserID(userID) {
@@ -59,14 +48,24 @@ async function createRent(userID, placeID, startDate, endDate) {
 async function cancelRent(userID, RentID) {
     try {
         const result = await db.query('DELETE FROM rents WHERE UserID = ? AND RentID = ?', [userID, RentID]);
-        return result;
+        return { message: 'Rent deleted successfully' };
     } catch (error) {
         throw error;
 }}
+
+async function updateRent(userID, RentID, startDate, endDate) {
+    try {
+        const result = await db.query('UPDATE rents SET StartDate = ?, EndDate = ? WHERE UserID = ? AND RentID = ?', [startDate, endDate, userID, RentID]);
+        return { message: 'Rent updated successfully' };
+    } catch (error) {
+        throw error;
+    }
+}
 
 module.exports = {
     getRents,
     getRentsByUserID,
     createRent,
-    cancelRent
+    cancelRent,
+    updateRent
 };

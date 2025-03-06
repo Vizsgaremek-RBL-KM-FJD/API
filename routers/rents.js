@@ -3,12 +3,11 @@ const router = express.Router();
 const rents = require('../services/rents');
 
 router.get('/', async (req, res, next) => {
-    try {
-        const rentsList = await rents.getRents();
-        res.json(rentsList);
-    } catch (err) {
-        next(err);
-    }
+  try {
+    res.json(await rents.getRents());
+} catch (err) {
+    next(err);
+}
 });
 
 router.get('/:id', async (req, res, next) => {
@@ -51,6 +50,14 @@ router.post('/check-availability', async (req, res, next) => {
 router.delete('/:userID/:rentID', async (req, res, next) => {
     try {
         res.json(await rents.cancelRent(req.params.userID, req.params.rentID));
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.patch('/:userID/:rentID', async (req, res, next) => {
+    try {
+        res.json(await rents.updateRent(req.params.userID, req.params.rentID, req.body.startDate, req.body.endDate));
     } catch (err) {
         next(err);
     }
