@@ -3,6 +3,8 @@ const express = require('express');
 const usersRouter = require('./routers/users');
 const placesRouter = require('./routers/places');
 const rentsRouter = require('./routers/rents');
+const commentsRouter = require('./routers/comments');
+const path = require('path');
 
 const cookieParser = require("cookie-parser")
 const cors = require('cors');
@@ -28,6 +30,8 @@ const port = 3000;
 app.use(bodyParser.json())
 app.use(cookieParser());
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 const options = {
     passphrase: "alma",
     pfx: fs.readFileSync("./localhost.pfx")
@@ -41,6 +45,7 @@ app.get('/', (req, res) => {
 app.use('/users', usersRouter);
 app.use('/places', placesRouter);
 app.use('/rents', rentsRouter);
+app.use('/comments', commentsRouter);
 
 app.use((err, req, res, next) => {
     console.log(err.message, err.stack);

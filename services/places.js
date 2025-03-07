@@ -1,4 +1,6 @@
 const db = require('./db');
+const path = require('path');
+const fs = require('fs');
 
 async function getAllPlaces() {
     const rows = await db.query('SELECT * FROM place');
@@ -20,22 +22,63 @@ async function updatePlace(id, place) {
     return { message: 'Place updated successfully' };
 }
 
-async function createPlace(userId, address, placeName, price) {
-    const userResult = await db.query('SELECT first_name, last_name, phone_number FROM users WHERE ID = ?',
+// async function createPlace(userId, address, placeName, price) {
+//     const userResult = await db.query('SELECT first_name, last_name, phone_number FROM users WHERE ID = ?',
+//         [userId]
+//     );
+
+//     console.log("SQL lekérdezés eredménye:", userResult);
+//     if (userResult.length === 0) {
+//         throw new Error('Felhasználó nem található', Error);
+//     }
+
+//     const { first_name, last_name, phone_number } = userResult[0];
+//     const ownerName = `${first_name} ${last_name}`;
+
+//     const result = await db.query(
+//         'INSERT INTO place (UserID, owner_name, phone_number, address, place_name, price) VALUES (?, ?, ?, ?, ?, ?)',
+//         [userId, ownerName, phone_number, address, placeName, price]
+//     );
+
+//     return { message: 'Place created successfully', placeId: result.insertId };
+// }
+
+
+
+async function createPlace(userId, address, placeName, price, image) {
+    // Felhasználó adatainak lekérése
+    const userResult = await db.query(
+        'SELECT first_name, last_name, phone_number FROM users WHERE ID = ?',
         [userId]
     );
 
     console.log("SQL lekérdezés eredménye:", userResult);
     if (userResult.length === 0) {
-        throw new Error('Felhasználó nem található', Error);
+        throw new Error('Felhasználó nem található');
     }
 
     const { first_name, last_name, phone_number } = userResult[0];
     const ownerName = `${first_name} ${last_name}`;
 
+    // Ha van kép, mentsük el és állítsuk be az elérési útját
+    let imagePath = null;
+    if (image) {
+        const uploadDir = path.join(__dirname, '../uploads');
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+
+        const fileName = `${Date.now()}-${image.originalname}`;
+        imagePath = `/uploads/${fileName}`;
+
+        // Kép mentése
+        fs.writeFileSync(path.join(uploadDir, fileName), image.buffer);
+    }
+
+    // Adatbázisba írás
     const result = await db.query(
-        'INSERT INTO place (UserID, owner_name, phone_number, address, place_name, price) VALUES (?, ?, ?, ?, ?, ?)',
-        [userId, ownerName, phone_number, address, placeName, price]
+        'INSERT INTO place (UserID, owner_name, phone_number, address, place_name, price, image_path) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [userId, ownerName, phone_number, address, placeName, price, imagePath]
     );
 
     return { message: 'Place created successfully', placeId: result.insertId };
