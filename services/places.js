@@ -16,7 +16,7 @@ async function deletePlace(id) {
 }
 
 async function updatePlace(id, place) {
-    const result = await db.query('UPDATE place SET address = ?, place_name = ?, price = ? WHERE PlaceID = ?', [place.address, place.place_name, place.price, id]);
+    const result = await db.query('UPDATE place SET address = ?, place_name = ?, price = ?, status=? WHERE PlaceID = ?', [place.address, place.place_name, place.price, place.status, id]);
     return { message: 'Place updated successfully' };
 }
 

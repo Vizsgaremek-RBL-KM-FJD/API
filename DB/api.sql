@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2025. Már 06. 12:12
+-- Létrehozás ideje: 2025. Már 07. 11:48
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -34,16 +34,17 @@ CREATE TABLE `place` (
   `phone_number` varchar(15) NOT NULL,
   `address` varchar(255) NOT NULL,
   `place_name` varchar(100) NOT NULL,
-  `price` double NOT NULL
+  `price` double NOT NULL,
+  `status` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- A tábla adatainak kiíratása `place`
 --
 
-INSERT INTO `place` (`PlaceID`, `UserID`, `owner_name`, `phone_number`, `address`, `place_name`, `price`) VALUES
-(16, 7, 'Bencus Ritzl', '06-06-111-2223', 'Békás 12.A', 'Békás', 15000),
-(17, 6, 'János Fekete', '06-50-137-9865', 'Mezőkovácsháza', 'Kovácsházi terem', 7800);
+INSERT INTO `place` (`PlaceID`, `UserID`, `owner_name`, `phone_number`, `address`, `place_name`, `price`, `status`) VALUES
+(16, 7, 'Bencus Ritzl', '06-06-111-2223', 'Békás 12.A', 'Békás', 15000, 1),
+(17, 6, 'János Fekete', '06-50-137-9865', 'Mezőkovácsháza', 'Kovácsházi terem', 8001, 1);
 
 -- --------------------------------------------------------
 
@@ -60,8 +61,16 @@ CREATE TABLE `rents` (
   `UserPhoneNumber` varchar(15) DEFAULT NULL,
   `StartDate` datetime NOT NULL,
   `EndDate` datetime NOT NULL,
-  `TotalAmount` double NOT NULL
+  `TotalAmount` double NOT NULL,
+  `status` enum('not started','ongoing','canceled','done') NOT NULL DEFAULT 'not started'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- A tábla adatainak kiíratása `rents`
+--
+
+INSERT INTO `rents` (`RentID`, `UserID`, `PlaceID`, `OwnerPhoneNumber`, `UserName`, `UserPhoneNumber`, `StartDate`, `EndDate`, `TotalAmount`, `status`) VALUES
+(28, 6, 17, '06-50-137-9865', 'János Fekete', '06-50-137-9865', '2025-03-30 12:00:00', '2025-03-30 15:00:00', 23400, 'not started');
 
 -- --------------------------------------------------------
 
@@ -89,7 +98,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`ID`, `first_name`, `last_name`, `gender`, `email`, `address`, `phone_number`, `password`, `isadmin`, `active`) VALUES
 (5, 'Roxi', 'Nemes', 'nő', 'nms.roxi@gmail.com', 'Barcsay utca 6.', '06774225900', '$2b$10$tZgZ7LpcHCFIZUDTrl11yOokE3gX63QNavhB2oqi0nmXOoO05q4u.', 0, 'active'),
 (6, 'János', 'Fekete', 'férfi', 'janosfekete@gmail.com', 'Barcsay utca 6.', '06-50-137-9865', '$2b$10$COE6AlHVPPSjy9cdw4kzgeqTMWKrh7VoOl07ai6qPlRvuKE2SfAuK', 1, 'active'),
-(7, 'Bencus', 'Ritzl', 'nő', 'bence@gmail.com', 'Zugló', '06-06-111-2223', '$2b$10$MwqKrLT/X1cKw52QaDbSn.Anvb8J1rcXJw0OFBPIPS/yPo3YyFFTy', 1, 'active');
+(7, 'Bencuska', 'Ritzl', 'férfi', 'bence@gmail.com', 'Zuglós', '06-06-111-2223', '$2b$10$MwqKrLT/X1cKw52QaDbSn.Anvb8J1rcXJw0OFBPIPS/yPo3YyFFTy', 0, 'active');
 
 --
 -- Indexek a kiírt táblákhoz
@@ -131,7 +140,7 @@ ALTER TABLE `place`
 -- AUTO_INCREMENT a táblához `rents`
 --
 ALTER TABLE `rents`
-  MODIFY `RentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `RentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT a táblához `users`

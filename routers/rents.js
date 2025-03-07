@@ -63,4 +63,22 @@ router.patch('/:userID/:rentID', async (req, res, next) => {
     }
 });
 
+router.patch('/:userID/:rentID', async (req, res, next) => {
+    try {
+        res.json(await rents.updateStatus(req.params.userID, req.params.rentID));
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.get('/:userID/:rentID', async (req, res, next) => {
+    const userID = req.params.userID;
+    try {
+        const rents = await rents.getStatus(userID);
+        res.json(rents);
+    } catch (err) {
+        next(err);
+    }
+});
+
 module.exports = router;
