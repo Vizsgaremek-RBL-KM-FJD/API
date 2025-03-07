@@ -128,7 +128,7 @@ router.patch('/:id', authenticationToken, async function(req, res, next) {
 
 router.patch('/sadmin-update-profile/:id',authenticationToken, async(req, res)=>{
     const userId= req.params.id
-    const allowedFields = ['first_name', 'last_name', 'gender', 'email', 'address', 'phone_number','active', 'isadmin', ];
+    const allowedFields = ['first_name', 'last_name', 'gender', 'email', 'address', 'phone_number','status', 'isadmin', ];
     const updateData = {}
     allowedFields.forEach( field=>{
         if (req.body[field] !== undefined) updateData[field]= req.body[field]
