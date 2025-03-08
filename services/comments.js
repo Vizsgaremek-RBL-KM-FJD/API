@@ -1,6 +1,7 @@
 const db = require('./db');
 
 async function createComment(placeID, userID, username, text) {
+    console.log('Create comment parameters:', placeID, userID, username, text);
     try {
     const result = await db.query(
         'INSERT INTO comments (placeID, userID, username, text) VALUES (?, ?, ?, ?)',
@@ -8,6 +9,7 @@ async function createComment(placeID, userID, username, text) {
     );
     return { message: 'Comment created successfully', commentID: result.insertId };
     } catch (err) {
+        console.error('Error creating comment:', err);
         throw new Error('Failed to create comment', err);
     }
 }

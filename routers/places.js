@@ -37,9 +37,9 @@ router.delete('/:id', async (req, res, next) => {
     }
 });
 
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', upload.single('image'), async (req, res, next) => {
     try {
-        res.json(await places.updatePlace(req.params.id, req.body));
+        res.json(await places.updatePlace(req.params.id, req.body, req.file));
     } catch (err) {
         next(err);
     }
