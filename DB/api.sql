@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2025. Már 10. 08:40
+-- Létrehozás ideje: 2025. Már 10. 08:47
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -31,9 +31,17 @@ CREATE TABLE `comments` (
   `id` int(11) NOT NULL,
   `placeID` int(11) NOT NULL,
   `userID` int(11) NOT NULL,
-  `text` text NOT NULL,
+  `username` varchar(50) DEFAULT NULL,
+  `text` varchar(250) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- A tábla adatainak kiíratása `comments`
+--
+
+INSERT INTO `comments` (`id`, `placeID`, `userID`, `username`, `text`, `created_at`) VALUES
+(1, 16, 6, 'János', 'szar volt', '2025-03-10 07:47:30');
 
 -- --------------------------------------------------------
 
@@ -49,16 +57,17 @@ CREATE TABLE `place` (
   `address` varchar(255) NOT NULL,
   `place_name` varchar(100) NOT NULL,
   `price` double NOT NULL,
-  `status` tinyint(1) DEFAULT 1
+  `status` tinyint(1) DEFAULT 1,
+  `image_path` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- A tábla adatainak kiíratása `place`
 --
 
-INSERT INTO `place` (`PlaceID`, `UserID`, `owner_name`, `phone_number`, `address`, `place_name`, `price`, `status`) VALUES
-(16, 7, 'Bencus Ritzl', '06-06-111-2223', 'Békás 12.A', 'Békás', 15000, 1),
-(17, 6, 'János Fekete', '06-50-137-9865', 'Mezőkovácsháza', 'Kovácsházi terem', 8001, 1);
+INSERT INTO `place` (`PlaceID`, `UserID`, `owner_name`, `phone_number`, `address`, `place_name`, `price`, `status`, `image_path`) VALUES
+(16, 7, 'Bencus Ritzl', '06-06-111-2223', 'Békás 12.A', 'Békás', 15000, 1, NULL),
+(17, 6, 'János Fekete', '06-50-137-9865', 'Mezőkovácsháza', 'Kovácsházi terem', 8001, 1, '/uploads/1741592640187-terem.jpeg');
 
 -- --------------------------------------------------------
 
@@ -156,7 +165,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT a táblához `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT a táblához `place`
