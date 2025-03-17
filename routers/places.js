@@ -21,6 +21,7 @@ router.post('/create', upload.single('image'), async (req, res, next) => {
 });
 
 
+
 router.get('/', async (req, res, next) => {
     try {
         res.json(await places.getAllPlaces());
