@@ -63,9 +63,9 @@ router.patch('/:userID/:rentID', async (req, res, next) => {
     }
 });
 
-router.patch('/:userID/:rentID', async (req, res, next) => {
+router.patch('/:rentID', async (req, res, next) => {
     try {
-        res.json(await rents.updateStatus(req.params.userID, req.params.rentID));
+        res.json(await rents.updateStatus(req.params.rentID, req.body.status));
     } catch (err) {
         next(err);
     }

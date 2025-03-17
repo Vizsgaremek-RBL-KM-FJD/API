@@ -62,9 +62,9 @@ async function updateRent(userID, RentID, startDate, endDate) {
     }
 }
 
-async function updateStatus(rent) {
+async function updateStatus(RentID, status) {
     try {
-        const result = await db.query('UPDATE rents SET status = ? WHERE UserID = ? AND RentID = ?', [rent.Status, rent.UserID, rent.RentID]);
+        const result = await db.query('UPDATE rents SET status = ? AND RentID = ?', [status, RentID]);
         return { message: 'Rent status updated successfully' };
     } catch (error) {
         throw error;
@@ -79,6 +79,7 @@ async function getStatus(userID, RentID) {
         throw error;
     }
 }
+
 
 module.exports = {
     getRents,

@@ -39,11 +39,11 @@ async function getMail(email){
 async function update(id, user) {
     console.log("eljárás elindlt")
     
-    const string = `UPDATE users SET first_name = ?, last_name = ?, gender = ?, email = ?, address = ?, phone_number = ?, status = ?, isAdmin = ? WHERE id = ? `
+    const string = `UPDATE users SET first_name = ?, last_name = ?, gender = ?, email = ?, address = ?, phone_number = ?, active = ?, isAdmin = ? WHERE id = ? `
     console.log(string)
     const result = await db.query(
-        `UPDATE users SET first_name = ?, last_name = ?, gender = ?, email = ?, address = ?, phone_number = ?, status = ?, isadmin = ? WHERE id = ? `,
-        [user.first_name, user.last_name, user.gender, user.email, user.address, user.phone_number, user.status, user.isadmin, id]
+        `UPDATE users SET first_name = ?, last_name = ?, gender = ?, email = ?, address = ?, phone_number = ?, active = ?, isadmin = ? WHERE id = ? `,
+        [user.first_name, user.last_name, user.gender, user.email, user.address, user.phone_number, user.active, user.isadmin, id]
     );
     console.log("Result:::",result)
     let message = "User can not be updated";
