@@ -55,7 +55,8 @@ router.delete('/:userID/:rentID', async (req, res, next) => {
     }
 });
 
-router.patch('/:userID/:rentID', async (req, res, next) => {
+router.put('/:userID/:rentID', async (req, res, next) => {
+    console.log(req.params, req.body)
     try {
         res.json(await rents.updateRent(req.params.userID, req.params.rentID, req.body.startDate, req.body.endDate));
     } catch (err) {
