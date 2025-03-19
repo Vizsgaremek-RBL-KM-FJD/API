@@ -71,7 +71,7 @@ router.post("/login", async(req,res,next)=>{
         const passwordMatch = await bcrypt.compare(password, user.password)
         
         if (user && passwordMatch){
-            const token = await jwt.sign({id:user.id}, SECRETKEY, {expiresIn:"1h"})
+            const token = await jwt.sign({id:user.id}, SECRETKEY, {expiresIn:"10h"})
             res.cookie('token', token, {
                 httpOnly:true,
                 secure:true,
