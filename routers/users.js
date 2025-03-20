@@ -49,6 +49,8 @@ router.get('/profile', authenticationToken, async function(req, res, next) {
     }
 });
 
+
+
 router.post('/register', async function(req, res, next) {
     let user = req.body
     console.log(user)
@@ -165,6 +167,17 @@ router.get('/isAdmin/:id', async function(req, res, next) {
     try {
         const isAdmin = await users.isAdmin(id);
         res.json(isAdmin);
+    }
+    catch (err) {
+        next(err);
+    }   
+});
+
+router.get('/:id', async function(req, res, next) {
+    const id = req.params.id;
+    try {
+        const user = await users.getById(id);
+        res.json(user);
     }
     catch (err) {
         next(err);

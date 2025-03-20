@@ -87,6 +87,11 @@ async function isAdmin(id) {
     return rows ? rows[0].isAdmin === 1 : false;
 }
 
+async function getById(id) {
+    const rows = await db.query("SELECT * FROM users WHERE id = ?", [id]);
+    return rows ? rows[0] : null;
+}
+
 
 module.exports = {
     getDatas,
@@ -95,5 +100,6 @@ module.exports = {
     update,
     remove,
     patch,
-    isAdmin
+    isAdmin,
+    getById
 };
