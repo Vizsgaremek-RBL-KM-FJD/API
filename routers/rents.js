@@ -22,14 +22,16 @@ router.get('/:id', async (req, res, next) => {
 
 
 router.post('/', async (req, res, next) => {
+    console.log('Request body:', req.body); // add this line
     const { userID, placeID, startDate, endDate } = req.body;
     try {
-        const result = await rents.createRent(userID, placeID, startDate, endDate);
-        res.json({ message: 'Rent successfully created', result });
+      const result = await rents.createRent(userID, placeID, startDate, endDate);
+      res.json({ message: 'Rent successfully created', result });
     } catch (err) {
-        next(err);
+      console.error('Error creating rent:', err);
+      next(err);
     }
-});
+  });
 
 
 router.post('/check-availability', async (req, res, next) => {
