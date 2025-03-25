@@ -92,7 +92,9 @@ async function cancelRent(userID, RentID) {
         throw error;
 }}
 
-async function updateRent(userID, RentID, startDate, endDate, status) {
+async function updateRent(userID, RentID,startDate, endDate, status, ) 
+{ 
+    console.log("updateRent", startDate, endDate, status,userID, RentID );
     try {
         const result = await db.query('UPDATE rents SET StartDate = ?, EndDate = ?, status = ? WHERE UserID = ? AND RentID = ?', [startDate, endDate, status, userID, RentID]);
         return { message: 'Rent updated successfully' };

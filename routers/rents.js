@@ -29,34 +29,29 @@ router.post('/', async (req, res, next) => {
   const { userID, placeID, startDate, endDate } = req.body;
 
   try {
-      // Létrehozzuk a foglalást
+
       const result = await rents.createRent(userID, placeID, startDate, endDate);
 
-
-      // Dátumok formázása
       const formattedStartDate = moment(startDate).format('YYYY.MM.DD. HH:mm');
       const formattedEndDate = moment(endDate).format('YYYY.MM.DD. HH:mm');
 
-      // Felhasználó adatainak lekérése a userID alapján
-      const user = await users.getById(userID); // Feltételezve, hogy van egy getUserByID függvényed, amely a felhasználó adatait adja vissza
+      const user = await users.getById(userID);
 
       if (!user) {
           return res.status(404).json({ message: 'User not found' });
       }
 
-      // Nodemailer beállítások
       const transporter = nodemailer.createTransport({
           service: "gmail",
           auth: {
-              user: "feketejanosdavid@ktch.hu",  // Alkalmazás jelszóval
-              pass: "btfd turg piah twqp",  // Az alkalmazás jelszót használd itt
+              user: "feketejanosdavid@ktch.hu",
+              pass: "btfd turg piah twqp",
           },
       });
 
-      // E-mail opciók
       const mailOptions = {
         from: '"Kezdőrugás Csapata" <feketejanosdavid@ktch.hu>',
-        to: user.email,  // A felhasználó e-mail címe
+        to: user.email,
         subject: "🎉 Sikeres foglalás - Kezdőrugás Csapata 🏆",
         html: `
             <div style="font-family: Arial, sans-serif; color: #333; background-color: #f4f7fc; padding: 20px; border-radius: 8px;">
@@ -89,10 +84,8 @@ router.post('/', async (req, res, next) => {
         `,
     };
 
-      // E-mail küldése
       await transporter.sendMail(mailOptions);
 
-      // Válasz küldése a kliensnek
       res.json({ message: 'Rent successfully created', result });
   } catch (err) {
       console.error('Error creating rent:', err);
