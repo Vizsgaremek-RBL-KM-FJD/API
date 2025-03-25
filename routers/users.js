@@ -3,6 +3,7 @@ const router = express.Router();
 const users = require('../services/users');
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
+const nodemailer = require("nodemailer");
 
 require('dotenv').config()
 const SECRETKEY = process.env.SECRETKEY
@@ -52,16 +53,79 @@ router.get('/profile', authenticationToken, async function(req, res, next) {
 
 
 router.post('/register', async function(req, res, next) {
-    let user = req.body
-    console.log(user)
-    user.password = await bcrypt.hash(user.password, 10);
+    let user = req.body;
+    console.log(user);
+
     try {
-        res.json(await users.create(user));
-    }
-    catch (err) {
+        // Jelszó titkosítása
+        user.password = await bcrypt.hash(user.password, 10);
+
+        // Felhasználó létrehozása
+        const createdUser = await users.create(user);
+
+        // E-mail küldése a regisztráció után
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: "feketejanosdavid@ktch.hu",
+                pass: "btfd turg piah twqp", // Alkalmazás jelszót használsz?
+            },
+        });
+
+        const mailOptions = {
+            from: '"Kezdőrugás csapata" <feketejanosdavid@ktch.hu>',
+            to: user.email,
+            subject: "🎉 Sikeres regisztráció - Kezdőrugás Csapata 🚀",
+            html: `
+                <div style="font-family: Arial, sans-serif; color: #333; background-color: #f4f7fc; padding: 20px; border-radius: 8px;">
+                    <h2 style="color: #2d8b99;">Kedves ${user.first_name} ${user.last_name}! 👋</h2>
+                    <p style="font-size: 16px; line-height: 1.5;">
+                        Örömmel értesítünk, hogy sikeresen regisztráltál a Kezdőrugás oldalára! 🚀<br><br>
+                        Most már a legjobb helyen vagy, így indulhat is a bérlés / bérbe adás!
+                    </p>
+                    <h3 style="color: #2d8b99;">Az adataid:</h3>
+                    <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 10px; background-color: #eef7f8; font-weight: bold;">👤 Név:</td>
+                            <td style="padding: 10px; background-color: #eef7f8; font-weight: normal;">${user.first_name} ${user.last_name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; background-color: #eef7f8; font-weight: bold;">📧 E-mail:</td>
+                            <td style="padding: 10px; background-color: #eef7f8; font-weight: normal;">${user.email}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; background-color: #eef7f8; font-weight: bold;">📞 Telefonszám:</td>
+                            <td style="padding: 10px; background-color: #eef7f8; font-weight: normal;">${user.phone_number}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; background-color: #eef7f8; font-weight: bold;">🏠 Cím:</td>
+                            <td style="padding: 10px; background-color: #eef7f8; font-weight: normal;">${user.address}</td>
+                        </tr>
+                    </table>
+                    <p style="font-size: 16px; margin-top: 20px;">
+                        Köszönjük, hogy csatlakoztál a közösséghez! Ne habozz kérdezni bármilyen segítséggel kapcsolatban. 💬<br><br>
+                        Üdvözlettel,<br>
+                        A Kezdőrugás Csapata 🎯
+                    </p>
+                    <footer style="margin-top: 40px; font-size: 14px; color: #888;">
+                        <p>Ha nem te végezted el ezt a regisztrációt, kérjük, azonnal vedd fel velünk a kapcsolatot!</p>
+                    </footer>
+                </div>
+            `,
+        };
+
+        // E-mail küldése, majd a válasz visszaküldése
+        await transporter.sendMail(mailOptions);
+
+        // Válasz küldése a kliensnek
+        return res.json(createdUser);
+    } catch (err) {
         next(err);
+        return res.status(500).json({ error: "Hiba a regisztráció során." });
     }
 });
+
+
 
 router.post("/login", async(req,res,next)=>{
     let {email, password}=req.body

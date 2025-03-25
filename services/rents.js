@@ -92,19 +92,10 @@ async function cancelRent(userID, RentID) {
         throw error;
 }}
 
-async function updateRent(userID, RentID, startDate, endDate) {
+async function updateRent(userID, RentID, startDate, endDate, status) {
     try {
-        const result = await db.query('UPDATE rents SET StartDate = ?, EndDate = ? WHERE UserID = ? AND RentID = ?', [startDate, endDate, userID, RentID]);
+        const result = await db.query('UPDATE rents SET StartDate = ?, EndDate = ?, status = ? WHERE UserID = ? AND RentID = ?', [startDate, endDate, status, userID, RentID]);
         return { message: 'Rent updated successfully' };
-    } catch (error) {
-        throw error;
-    }
-}
-
-async function updateStatus(RentID, status) {
-    try {
-        const result = await db.query('UPDATE rents SET status = ? AND RentID = ?', [status, RentID]);
-        return { message: 'Rent status updated successfully' };
     } catch (error) {
         throw error;
     }
@@ -126,6 +117,5 @@ module.exports = {
     createRent,
     cancelRent,
     updateRent,
-    updateStatus,
     getStatus
 };
