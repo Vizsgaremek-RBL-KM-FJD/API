@@ -1,3 +1,4 @@
+const { get } = require('http');
 const db = require('./db');
 
 async function getRents() {
@@ -10,44 +11,14 @@ async function getRentsByUserID(userID) {
     return rows;
   }
 
-// async function createRent(userID, placeID, startDate, endDate) {
-//     try {
-//         const [place] = await db.query(
-//             'SELECT price, owner_name, phone_number FROM place WHERE PlaceID = ?',
-//             [placeID]
-//         );
-//         const [user] = await db.query(
-//             'SELECT first_name, last_name, phone_number FROM users WHERE ID = ?',
-//             [userID]
-//         );
-        
-//         const start = new Date(startDate);
-//         const end = new Date(endDate);
-//         const duration = (end - start) / (1000 * 60 * 60);
-
-//         const totalAmount = place.price * duration;
-
-//         const result = await db.query('INSERT INTO rents (UserID, PlaceID, OwnerPhoneNumber, UserName, UserPhoneNumber, StartDate, EndDate, TotalAmount) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-//         [
-//             userID,
-//             placeID,
-//             place.phone_number,
-//             `${user.first_name} ${user.last_name}`,
-//             user.phone_number,
-//             startDate,
-//             endDate,
-//             totalAmount
-//         ]);
-
-//         return result;
-//     } catch (error) {
-//         throw error;
-//     }
-// }
+async function getRentsByPlaceID(PlaceID) {
+  console.log("backend", PlaceID);
+  const rows = await db.query('SELECT * FROM rents WHERE PlaceID = ?', [PlaceID]);
+  return rows;
+}
 
 async function createRent(userID, placeID, startDate, endDate) {
     try {
-      // Konvertáljuk a dátumformátumot
       const start = new Date(startDate);
       const end = new Date(endDate);
       const startString = start.toISOString().replace('T', ' ').replace('Z', '');
@@ -116,6 +87,7 @@ async function getStatus(userID, RentID) {
 module.exports = {
     getRents,
     getRentsByUserID,
+    getRentsByPlaceID,
     createRent,
     cancelRent,
     updateRent,

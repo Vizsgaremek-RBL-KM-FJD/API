@@ -23,6 +23,16 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
+router.get('/rent/:PlaceID', async (req, res, next) => {
+  const placeID = req.params.PlaceID;
+    try {
+        const rent = await rents.getRentsByPlaceID(placeID);
+        res.json(rent);
+    } catch (err) {
+        next(err);
+    }
+})
+
 
 router.post('/', async (req, res, next) => {
   console.log('Request body:', req.body);
@@ -93,21 +103,7 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-
-router.post('/check-availability', async (req, res, next) => {
-    const { date, time, placeID } = req.body;
-    try {
-      const rentsList = await rents.getRents();
-      const conflicts = rentsList.filter(rent => rent.placeID === placeID && rent.startDate <= date && rent.endDate >= date);
-      if (conflicts.length > 0) {
-        res.json({ success: false, message: 'Room is not available for rent!' });
-      } else {
-        res.json({ success: true, message: 'Room is available for rent!' });
-      }
-    } catch (err) {
-      next(err);
-    }
-  });
+  
 
 router.delete('/:userID/:rentID', async (req, res, next) => {
     try {

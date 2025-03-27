@@ -142,7 +142,7 @@ router.post("/login", async(req,res,next)=>{
                 httpOnly:true,
                 secure:true,
                 sameSite:'none',
-                maxAge:3600000
+                maxAge:36000000
             })
             
             // const resUser= {...user, accessToken:token}
