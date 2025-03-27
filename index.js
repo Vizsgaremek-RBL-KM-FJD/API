@@ -4,6 +4,7 @@ const usersRouter = require('./routers/users');
 const placesRouter = require('./routers/places');
 const rentsRouter = require('./routers/rents');
 const commentsRouter = require('./routers/comments');
+const reportsRouter = require('./routers/report');
 const path = require('path');
 
 const cookieParser = require("cookie-parser")
@@ -46,6 +47,7 @@ app.use('/users', usersRouter);
 app.use('/places', placesRouter);
 app.use('/rents', rentsRouter);
 app.use('/comments', commentsRouter);
+app.use('/reports', reportsRouter);
 
 app.use((err, req, res, next) => {
     console.log(err.message, err.stack);
