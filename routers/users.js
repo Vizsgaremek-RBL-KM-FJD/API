@@ -4,6 +4,8 @@ const users = require('../services/users');
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer");
+const crypto = require('crypto');
+const db = require('../services/db');
 
 require('dotenv').config()
 const SECRETKEY = process.env.SECRETKEY
@@ -247,5 +249,59 @@ router.get('/:id', async function(req, res, next) {
         next(err);
     }   
 });
+
+router.post('/forgot-password', async (req, res) => {
+    const { email } = req.body;
+    const user = await users.getMail(email);
+    if (!user) {
+        return res.status(404).json({ message: 'A felhasználó nem található!' });
+    }
+    
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresDate = new Date();
+    console.log("Eredeti idő:", expiresDate.toISOString());
+    expiresDate.setHours(expiresDate.getHours() + 2);
+    console.log("Változtatott idő:", expiresDate.toISOString());
+    user.resetPasswordExpires = expiresDate.toISOString().replace('T', ' ').replace('Z', '');
+    console.log("userid", user.ID, "resetPawwordToken", user.resetPasswordToken, "resetPasswordExpires", user.resetPasswordExpires)
+    await users.updateToken(user.ID, user.resetPasswordToken, user.resetPasswordExpires);
+
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: "feketejanosdavid@ktch.hu",
+            pass: "btfd turg piah twqp",
+        },
+    });
+    const mailOptions = {
+        from: '"Kezdőrugás Csapata" <feketejanosdavid@ktch.hu>',
+        to: user.email,
+        subject: "Jelszö visszaállítás",
+        text: `Kattints a linkre a jelszó visszaállításához: http://localhost:4200/reset-password/${token}`,
+        // Add this line
+        url: `http://localhost:4200/reset-password/${token}`,
+      };
+
+    transporter.sendMail(mailOptions, (err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Email küldési hiba' });
+            
+        }
+        res.json({ message: 'Jelszó visszaállítás emailben el lett küldve!' });
+    })
+})
+
+router.patch('/reset-password', authenticationToken, async (req, res) => {
+    const { resetPasswordToken, password } = req.body;
+    if (!resetPasswordToken || !password) {
+      return res.status(400).json({ message: 'Invalid request: resetPasswordToken and password are required' });
+    }
+    try {
+      res.json(await users.resetPassword(resetPasswordToken, password));
+    } catch (err) {
+      next(err);
+    }
+  })
+
 
 module.exports = router;

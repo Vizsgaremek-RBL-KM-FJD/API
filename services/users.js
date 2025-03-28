@@ -53,6 +53,16 @@ async function update(id, user) {
     return { message };
 }
 
+async function updateToken( id, resetPasswordToken, resetPassswordExpires) {
+    const result = await db.query(`UPDATE users SET resetPasswordToken = ?, resetPasswordExpires = ? WHERE id = ?`, [resetPasswordToken, resetPassswordExpires, id]);
+
+    let message = "User can not be updated";
+    if (result.affectedRows) {
+        message = "User updated successfully";
+    }
+    return { message };
+} 
+
 async function remove(id) {
     const result = await db.query(`DELETE FROM users WHERE id = ?`, [id]);
 
@@ -93,6 +103,35 @@ async function getById(id) {
 }
 
 
+
+async function getByResetPasswordToken(token) {
+    const rows = await db.query("SELECT * FROM users WHERE resetPasswordToken = ?", [token]);
+    return rows ? rows[0] : null;
+}
+
+async function resetPassword(resetPasswordToken, password) {
+    const user = await getByResetPasswordToken(resetPasswordToken);
+    if (!user) {
+      return { message: "Invalid reset password token" };
+    }
+  
+    const expiresDate = new Date(user.resetPasswordExpires);
+    const currentDate = new Date();
+    if (expiresDate < currentDate) {
+      return { message: "Reset password token has expired" };
+    }
+  
+    const rows = await db.query("UPDATE users SET password = ? WHERE resetPasswordToken =? ", [password, resetPasswordToken]);
+  
+    let message = "User can not be updated";
+    if (rows.affectedRows) {
+      message = "User updated successfully";
+      await db.query("UPDATE users SET resetPasswordToken = NULL, resetPasswordExpires = NULL WHERE resetPasswordToken =? ", [resetPasswordToken]);
+    }
+    return { message };
+  }
+
+
 module.exports = {
     getDatas,
     getMail,
@@ -101,5 +140,8 @@ module.exports = {
     remove,
     patch,
     isAdmin,
-    getById
+    getById,
+    getByResetPasswordToken,
+    updateToken,
+    resetPassword
 };
