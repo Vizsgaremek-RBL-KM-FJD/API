@@ -14,6 +14,10 @@ CREATE TABLE `comments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
+INSERT INTO `comments` (`id`, `placeID`, `userID`, `username`, `text`, `created_at`) VALUES
+(17, 25, 30, 'János Dávid', 'komment', '2025-03-30 18:14:24');
+
+
 CREATE TABLE `place` (
   `PlaceID` int(11) NOT NULL,
   `UserID` int(11) NOT NULL,
@@ -23,14 +27,17 @@ CREATE TABLE `place` (
   `place_name` varchar(100) NOT NULL,
   `price` double NOT NULL,
   `status` tinyint(1) DEFAULT 1,
-  `image_path` varchar(255) DEFAULT NULL
+  `image_path` varchar(255) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-INSERT INTO `place` (`PlaceID`, `UserID`, `owner_name`, `phone_number`, `address`, `place_name`, `price`, `status`, `image_path`) VALUES
-(25, 31, 'Bence Ritzl', '06304567788', 'Békás, Sarkadi Imre utca 12', 'Békás sportközpont', 14500, 1, '/uploads/1743153827815-bekas.jpg'),
-(26, 31, 'Bence Ritzl', '06304567788', 'Budapest, zugló Bálint utca 13.', 'Zuglói Józsa Attila Sportcentrum', 23450, 1, '/uploads/1743153990531-belcentrum.jpg'),
-(27, 32, 'Márk Krizsicskó', '06304567788', 'Érd', 'Érdi Sportpálya', 34000, 1, '/uploads/1743155108251-erd.jpg');
+INSERT INTO `place` (`PlaceID`, `UserID`, `owner_name`, `phone_number`, `address`, `place_name`, `price`, `status`, `image_path`, `is_deleted`) VALUES
+(25, 31, 'Bence Ritzl', '06304567788', 'Békás, Sarkadi Imre utca 12', 'Békás sportközpont', 14500, 1, '/uploads/1743153827815-bekas.jpg', 0),
+(26, 31, 'Bence Ritzl', '06304567788', 'Budapest, zugló Bálint utca 13.', 'Zuglói Józsa Attila Sportcentrum', 23450, 1, '/uploads/1743153990531-belcentrum.jpg', 0),
+(27, 32, 'Márk Krizsicskó', '06304567788', 'Érd', 'Érdi Sportpálya', 34000, 1, '/uploads/1743155108251-erd.jpg', 0),
+(28, 30, 'János Dávid Fekete', '06501379865', 'tesz-vesz város', 'teszt', 12000, 1, NULL, 0);
+
 
 
 CREATE TABLE `rents` (
@@ -46,12 +53,16 @@ CREATE TABLE `rents` (
   `status` enum('not started','ongoing','canceled','done') NOT NULL DEFAULT 'not started'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
 INSERT INTO `rents` (`RentID`, `UserID`, `PlaceID`, `OwnerPhoneNumber`, `UserName`, `UserPhoneNumber`, `StartDate`, `EndDate`, `TotalAmount`, `status`) VALUES
 (62, 32, 25, '06304567788', 'Márk Krizsicskó', '06304567788', '2025-03-30 19:00:00', '2025-03-30 21:00:00', 29000, 'not started'),
 (63, 32, 26, '06304567788', 'Márk Krizsicskó', '06304567788', '2025-04-01 18:00:00', '2025-04-01 20:00:00', 46900, 'not started'),
 (64, 30, 26, '06304567788', 'János Dávid Fekete', '06501379865', '2025-03-29 18:00:00', '2025-03-29 21:00:00', 70350, 'not started'),
-(65, 30, 27, '06304567788', 'János Dávid Fekete', '06501379865', '2025-04-27 16:00:00', '2025-04-27 21:00:00', 170000, 'not started'),
-(66, 31, 26, '06304567788', 'Bence Ritzl', '06304567788', '2025-04-17 16:00:00', '2025-04-17 18:00:00', 46900, 'not started');
+(65, 30, 27, '06304567788', 'János Dávid Fekete', '06501379865', '2025-04-27 14:00:00', '2025-04-27 19:00:00', 170000, 'canceled'),
+(66, 31, 26, '06304567788', 'Bence Ritzl', '06304567788', '2025-04-17 16:00:00', '2025-04-17 18:00:00', 46900, 'not started'),
+(67, 30, 26, '06304567788', 'János Dávid Fekete', '06501379865', '2025-04-04 20:00:00', '2025-04-04 21:00:00', 23450, 'canceled'),
+(68, 30, 28, '06501379865', 'János Dávid Fekete', '06501379865', '2025-04-01 02:00:00', '2025-04-01 03:00:00', 12000, 'canceled');
+
 
 
 CREATE TABLE `reported` (
@@ -68,7 +79,7 @@ CREATE TABLE `reported` (
 
 
 INSERT INTO `reported` (`id`, `report_type`, `reported_id`, `reporter_id`, `report_date`, `checked`, `reason`, `commentID`, `placeID`) VALUES
-(7, 'place', 31, 32, '2025-03-28 08:42:30', 0, 'Nem tetszik', NULL, 26),
+(7, 'place', 31, 32, '2025-03-28 08:42:30', 1, 'Nem tetszik', NULL, 26),
 (8, 'place', 32, 31, '2025-03-28 08:52:06', 0, 'Kamu', NULL, 27);
 
 
@@ -102,7 +113,6 @@ ALTER TABLE `place`
   ADD PRIMARY KEY (`PlaceID`),
   ADD KEY `UserID` (`UserID`);
 
-
 ALTER TABLE `rents`
   ADD PRIMARY KEY (`RentID`),
   ADD KEY `UserID` (`UserID`),
@@ -113,18 +123,21 @@ ALTER TABLE `reported`
   ADD KEY `reported_id` (`reported_id`,`reporter_id`),
   ADD KEY `reporter_id` (`reporter_id`);
 
+
 ALTER TABLE `users`
   ADD PRIMARY KEY (`ID`),
   ADD UNIQUE KEY `email` (`email`);
 
+
 ALTER TABLE `comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 ALTER TABLE `place`
-  MODIFY `PlaceID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `PlaceID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 ALTER TABLE `rents`
-  MODIFY `RentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `RentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
+
 
 ALTER TABLE `reported`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
@@ -138,6 +151,7 @@ ALTER TABLE `comments`
 
 ALTER TABLE `place`
   ADD CONSTRAINT `place_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `users` (`ID`);
+
 
 ALTER TABLE `rents`
   ADD CONSTRAINT `rents_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `users` (`ID`),

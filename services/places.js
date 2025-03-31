@@ -32,8 +32,8 @@ async function updatePlace(id, place, image) {
     }
 
     const result = await db.query(
-        'UPDATE place SET address = ?, place_name = ?, price = ?, status = ?, image_path = COALESCE(?, image_path) WHERE PlaceID = ?',
-        [place.address, place.place_name, place.price, place.status, imagePath, id]
+        'UPDATE place SET address = ?, place_name = ?, price = ?, status = ?, image_path = COALESCE(?, image_path), is_deleted = ? WHERE PlaceID = ?',
+        [place.address, place.place_name, place.price, place.status, imagePath, place.is_deleted === undefined ? 0 : place.is_deleted, id]
     );
     return { message: 'Place updated successfully' };
 }
@@ -77,10 +77,16 @@ async function createPlace(userId, address, placeName, price, image) {
     return { message: 'Place created successfully', placeId: result.insertId };
 }
 
+async function getPlacesByPlaceID(placeID) {
+    const rows = await db.query('SELECT * FROM place WHERE PlaceID = ?', [placeID]);
+    return rows;
+}
+
 module.exports = {
     getAllPlaces,
     getPlaceById,
     createPlace,
     deletePlace,
-    updatePlace
+    updatePlace,
+    getPlacesByPlaceID
 };

@@ -85,6 +85,12 @@ router.get('/:id', async (req, res, next) => {
     }
   });
 
-  
+router.get('/places-rent/:PlaceID', async (req, res, next) => {
+    try {
+        res.json(await places.getPlacesByPlaceID(req.params.PlaceID));
+    } catch (err) {
+        next(err);
+    }
+})
 
 module.exports = router;
