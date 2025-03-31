@@ -114,13 +114,13 @@ async function resetPassword(resetPasswordToken, password) {
     if (!user) {
       return { message: "Invalid reset password token" };
     }
-  
+    user.password = await bcrypt.hash(user.password, 10);
     const expiresDate = new Date(user.resetPasswordExpires);
     const currentDate = new Date();
     if (expiresDate < currentDate) {
       return { message: "Reset password token has expired" };
     }
-  
+     
     const rows = await db.query("UPDATE users SET password = ? WHERE resetPasswordToken =? ", [password, resetPasswordToken]);
   
     let message = "User can not be updated";
@@ -129,7 +129,7 @@ async function resetPassword(resetPasswordToken, password) {
       await db.query("UPDATE users SET resetPasswordToken = NULL, resetPasswordExpires = NULL WHERE resetPasswordToken =? ", [resetPasswordToken]);
     }
     return { message };
-  }
+}
 
 
 module.exports = {

@@ -14,6 +14,7 @@ function authenticationToken(req,res,next){
 
     const token = req.cookies.token
     console.log("Token:",  req.cookies)
+    console.log("Bodí",req.body)
 
     if (!token) return res.status(401).json({message:"Hozzáférés megtagadva, nincs token!"})
     
@@ -163,16 +164,6 @@ router.post("/login", async(req,res,next)=>{
     }    
 })
 
-router.put("/:id", async (req, res) => {
-    const id = req.params.id;
-    const user = req.body;
-    try {
-      const result = await update(id, user, req);
-      res.json(result);
-    } catch (error) {
-      res.status(401).json({ message: error.message });
-    }
-  });
 
 router.delete('/:id', authenticationToken, async function(req, res, next) { 
     try {
@@ -257,10 +248,11 @@ router.post('/forgot-password', async (req, res) => {
         return res.status(404).json({ message: 'A felhasználó nem található!' });
     }
     
-    const token = crypto.randomBytes(32).toString('hex');
+    const token = crypto.randomBytes(20).toString('hex');
+    user.resetPasswordToken = token;
     const expiresDate = new Date();
     console.log("Eredeti idő:", expiresDate.toISOString());
-    expiresDate.setHours(expiresDate.getHours() + 2);
+    expiresDate.setHours(expiresDate.getHours()+3);
     console.log("Változtatott idő:", expiresDate.toISOString());
     user.resetPasswordExpires = expiresDate.toISOString().replace('T', ' ').replace('Z', '');
     console.log("userid", user.ID, "resetPawwordToken", user.resetPasswordToken, "resetPasswordExpires", user.resetPasswordExpires)
@@ -291,8 +283,24 @@ router.post('/forgot-password', async (req, res) => {
     })
 })
 
-router.patch('/reset-password', authenticationToken, async (req, res) => {
-    const { resetPasswordToken, password } = req.body;
+// router.patch('/reset-password', async (req, res, next) => {
+//     console.log("usersroputer reqbody",req.body);
+//     const { resetPasswordToken, password } = req.body;
+    
+//     if (!resetPasswordToken || !password) {
+//       return res.status(400).json({ message: 'Invalid request: resetPasswordToken and password are required' });
+//     }
+//     try {
+//       res.json(await users.resetPassword(resetPasswordToken, password));
+//     } catch (err) {
+//       next(err);
+//     }
+//   })
+
+router.put('/reset-password', async (req, res, next) => {
+    console.log("usersroputer reqbody",req.body);
+    let { resetPasswordToken, password } = req.body;
+    password = await bcrypt.hash(password, 10);
     if (!resetPasswordToken || !password) {
       return res.status(400).json({ message: 'Invalid request: resetPasswordToken and password are required' });
     }
@@ -302,6 +310,7 @@ router.patch('/reset-password', authenticationToken, async (req, res) => {
       next(err);
     }
   })
+
 
 
 module.exports = router;

@@ -28,4 +28,13 @@ router.put('/update', async (req, res, next) => {
     }
 })
 
+router.get('/:id', async (req, res, next) => {
+    const id = req.params.id;
+    try {
+        res.json(await report.getreportByID(id));
+    } catch (err) {
+        next(err);
+    }   
+});
+
 module.exports = router;

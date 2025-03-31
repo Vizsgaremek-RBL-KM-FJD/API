@@ -1,4 +1,7 @@
-const db = require('./db'); 
+const db = require('./db');
+const express = require('express');
+const router = express.Router();
+const report = require('../services/report'); 
 
 async function getReports() {
     const rows = await db.query('SELECT * FROM reported');
@@ -28,9 +31,20 @@ async function updateChecked(id, checked) {
     }
 }
 
+async function getreportByID(id) {
+    try {
+        const result = await db.query('SELECT * FROM reported WHERE id = ?', [id]);
+        return result;
+    } catch (err) {
+        console.error('Error getting report by ID:', err);
+        throw new Error('Failed to get report by ID', err);
+    }
+}
+
 
 module.exports = {
     getReports,
     createReport,
-    updateChecked
+    updateChecked,
+    getreportByID
 };
