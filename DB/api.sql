@@ -1,31 +1,8 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Gép: localhost
--- Létrehozás ideje: 2025. Már 28. 10:52
--- Kiszolgáló verziója: 10.4.28-MariaDB
--- PHP verzió: 8.0.28
+
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Adatbázis: `api`
---
-
--- --------------------------------------------------------
-
---
--- Tábla szerkezet ehhez a táblához `comments`
---
 
 CREATE TABLE `comments` (
   `id` int(11) NOT NULL,
@@ -36,11 +13,6 @@ CREATE TABLE `comments` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
---
--- Tábla szerkezet ehhez a táblához `place`
---
 
 CREATE TABLE `place` (
   `PlaceID` int(11) NOT NULL,
@@ -54,20 +26,12 @@ CREATE TABLE `place` (
   `image_path` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- A tábla adatainak kiíratása `place`
---
 
 INSERT INTO `place` (`PlaceID`, `UserID`, `owner_name`, `phone_number`, `address`, `place_name`, `price`, `status`, `image_path`) VALUES
 (25, 31, 'Bence Ritzl', '06304567788', 'Békás, Sarkadi Imre utca 12', 'Békás sportközpont', 14500, 1, '/uploads/1743153827815-bekas.jpg'),
 (26, 31, 'Bence Ritzl', '06304567788', 'Budapest, zugló Bálint utca 13.', 'Zuglói Józsa Attila Sportcentrum', 23450, 1, '/uploads/1743153990531-belcentrum.jpg'),
 (27, 32, 'Márk Krizsicskó', '06304567788', 'Érd', 'Érdi Sportpálya', 34000, 1, '/uploads/1743155108251-erd.jpg');
 
--- --------------------------------------------------------
-
---
--- Tábla szerkezet ehhez a táblához `rents`
---
 
 CREATE TABLE `rents` (
   `RentID` int(11) NOT NULL,
@@ -82,10 +46,6 @@ CREATE TABLE `rents` (
   `status` enum('not started','ongoing','canceled','done') NOT NULL DEFAULT 'not started'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- A tábla adatainak kiíratása `rents`
---
-
 INSERT INTO `rents` (`RentID`, `UserID`, `PlaceID`, `OwnerPhoneNumber`, `UserName`, `UserPhoneNumber`, `StartDate`, `EndDate`, `TotalAmount`, `status`) VALUES
 (62, 32, 25, '06304567788', 'Márk Krizsicskó', '06304567788', '2025-03-30 19:00:00', '2025-03-30 21:00:00', 29000, 'not started'),
 (63, 32, 26, '06304567788', 'Márk Krizsicskó', '06304567788', '2025-04-01 18:00:00', '2025-04-01 20:00:00', 46900, 'not started'),
@@ -93,11 +53,6 @@ INSERT INTO `rents` (`RentID`, `UserID`, `PlaceID`, `OwnerPhoneNumber`, `UserNam
 (65, 30, 27, '06304567788', 'János Dávid Fekete', '06501379865', '2025-04-27 16:00:00', '2025-04-27 21:00:00', 170000, 'not started'),
 (66, 31, 26, '06304567788', 'Bence Ritzl', '06304567788', '2025-04-17 16:00:00', '2025-04-17 18:00:00', 46900, 'not started');
 
--- --------------------------------------------------------
-
---
--- Tábla szerkezet ehhez a táblához `reported`
---
 
 CREATE TABLE `reported` (
   `id` int(11) NOT NULL,
@@ -111,19 +66,11 @@ CREATE TABLE `reported` (
   `placeID` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- A tábla adatainak kiíratása `reported`
---
 
 INSERT INTO `reported` (`id`, `report_type`, `reported_id`, `reporter_id`, `report_date`, `checked`, `reason`, `commentID`, `placeID`) VALUES
 (7, 'place', 31, 32, '2025-03-28 08:42:30', 0, 'Nem tetszik', NULL, 26),
 (8, 'place', 32, 31, '2025-03-28 08:52:06', 0, 'Kamu', NULL, 27);
 
--- --------------------------------------------------------
-
---
--- Tábla szerkezet ehhez a táblához `users`
---
 
 CREATE TABLE `users` (
   `ID` int(11) NOT NULL,
@@ -140,123 +87,63 @@ CREATE TABLE `users` (
   `resetPasswordExpires` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- A tábla adatainak kiíratása `users`
---
 
 INSERT INTO `users` (`ID`, `first_name`, `last_name`, `gender`, `email`, `address`, `phone_number`, `password`, `isadmin`, `active`, `resetPasswordToken`, `resetPasswordExpires`) VALUES
 (30, 'János Dávid', 'Fekete', 'férfi', 'janosdavidfekete@gmail.com', 'Budapest, Barcsay utca 6.', '06501379865', '$2b$10$eQMVo75rYE6CwGMMSxJ0g.LCY8sb.JJ35KqOKIM2cMucabshNuSRi', 1, 'active', NULL, NULL),
 (31, 'Bence', 'Ritzl', 'férfi', 'ritzlbencelevente@ktch.hu', 'Budapest, Zugló', '06304567788', '$2b$10$ynLCNW0JE.S/lDBFNj2uXOmaqXCnGU/8Xu.j23k/OC3vPe2ZBf1iK', 0, 'active', NULL, NULL),
 (32, 'Márk', 'Krizsicskó', 'férfi', 'krizsicskomark@ktch.hu', 'Érd, valamilyen utca 6.', '06304567788', '$2b$10$rRG0aiWBlxJHXnNiIy0wZ.5/Vrv2sRGRygVlyJlmZb258nYou1KJG', 0, 'active', NULL, NULL);
 
---
--- Indexek a kiírt táblákhoz
---
-
---
--- A tábla indexei `comments`
---
 ALTER TABLE `comments`
   ADD PRIMARY KEY (`id`),
   ADD KEY `userID` (`userID`),
   ADD KEY `placeID` (`placeID`);
 
---
--- A tábla indexei `place`
---
 ALTER TABLE `place`
   ADD PRIMARY KEY (`PlaceID`),
   ADD KEY `UserID` (`UserID`);
 
---
--- A tábla indexei `rents`
---
+
 ALTER TABLE `rents`
   ADD PRIMARY KEY (`RentID`),
   ADD KEY `UserID` (`UserID`),
   ADD KEY `PlaceID` (`PlaceID`);
 
---
--- A tábla indexei `reported`
---
 ALTER TABLE `reported`
   ADD PRIMARY KEY (`id`),
   ADD KEY `reported_id` (`reported_id`,`reporter_id`),
   ADD KEY `reporter_id` (`reporter_id`);
 
---
--- A tábla indexei `users`
---
 ALTER TABLE `users`
   ADD PRIMARY KEY (`ID`),
   ADD UNIQUE KEY `email` (`email`);
 
---
--- A kiírt táblák AUTO_INCREMENT értéke
---
-
---
--- AUTO_INCREMENT a táblához `comments`
---
 ALTER TABLE `comments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
---
--- AUTO_INCREMENT a táblához `place`
---
 ALTER TABLE `place`
   MODIFY `PlaceID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
---
--- AUTO_INCREMENT a táblához `rents`
---
 ALTER TABLE `rents`
   MODIFY `RentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
---
--- AUTO_INCREMENT a táblához `reported`
---
 ALTER TABLE `reported`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
---
--- AUTO_INCREMENT a táblához `users`
---
 ALTER TABLE `users`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
---
--- Megkötések a kiírt táblákhoz
---
-
---
--- Megkötések a táblához `comments`
---
 ALTER TABLE `comments`
   ADD CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`placeID`) REFERENCES `place` (`PlaceID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Megkötések a táblához `place`
---
 ALTER TABLE `place`
   ADD CONSTRAINT `place_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `users` (`ID`);
 
---
--- Megkötések a táblához `rents`
---
 ALTER TABLE `rents`
   ADD CONSTRAINT `rents_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `users` (`ID`),
   ADD CONSTRAINT `rents_ibfk_2` FOREIGN KEY (`PlaceID`) REFERENCES `place` (`PlaceID`);
 
---
--- Megkötések a táblához `reported`
---
 ALTER TABLE `reported`
   ADD CONSTRAINT `reported_ibfk_1` FOREIGN KEY (`reporter_id`) REFERENCES `users` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `reported_ibfk_2` FOREIGN KEY (`reported_id`) REFERENCES `users` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
